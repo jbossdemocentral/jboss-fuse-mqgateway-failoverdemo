@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+       xmlns:camel="http://camel.apache.org/schema/blueprint"
+       xsi:schemaLocation="
+       http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+       http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+  <cm:property-placeholder id="placeholder" persistent-id="io.fabric8.autodiscover" update-strategy="reload">
+    <cm:default-properties>
+      <cm:property name="username" value="admin"/>
+      <cm:property name="password" value="admin"/>
+    </cm:default-properties>
+  </cm:property-placeholder>
+  
+  <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+    <property name="brokerURL" value="discovery:(fabric://blogdemo)"/>
+    <property name="userName" value="${username}"/>
+    <property name="password" value="${password}"/>
+  </bean>
+
+  <bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+    <property name="maxConnections" value="1"/>
+    <property name="maximumActiveSessionPerConnection" value="500"/>
+    <property name="connectionFactory" ref="jmsConnectionFactory"/>
+  </bean>
+  
+  <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <property name="connectionFactory" ref="pooledConnectionFactory"/>
+  </bean>
+  
+  <camelContext trace="false" id="blueprintContext" xmlns="http://camel.apache.org/schema/blueprint">
+    <route id="sender" customId="true">
+        <from uri="timer://foo?period=5s"/>
+        <setBody>
+            <simple>FUSE A-MQ Camel Example ${date:now:hh:MM:ss.SSS}</simple>
+        </setBody>
+        <to uri="activemq:queue:camel-test"/>
+    </route>
+    <route id="receiver" customId="true">
+        <from uri="activemq:queue:camel-test"/>
+        <log message="${body}"/>
+    </route>
+</camelContext>
+
+</blueprint>

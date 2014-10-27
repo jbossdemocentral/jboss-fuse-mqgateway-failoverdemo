@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1414136845010
+Build-Jdk: 1.7.0_60-ea
+Built-By: christina
+Bundle-ManifestVersion: 2
+Bundle-Name: A Camel Blueprint Route
+Bundle-SymbolicName: failoverdemo
+Bundle-Version: 1.0.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Import-Package: org.apache.activemq;version="[5.9,6)",org.apache.activem
+ q.camel.component;version="[5.9,6)",org.apache.activemq.pool;version="[
+ 5.9,6)",org.osgi.service.blueprint;version="[1.0.0,2.0.0)"
+Tool: Bnd-1.50.0
