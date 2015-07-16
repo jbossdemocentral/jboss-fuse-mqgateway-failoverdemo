@@ -12,11 +12,11 @@
   "links": [ 
     { 
       "name":"Blog",
-      "url":"https://vimeo.com/130284677"
+      "url":"http://wei-meilin.blogspot.tw/2015/07/jboss-fusea-mq-achieve-fault-tolerant.html"
     },
     {
       "name":"Code",
-      "url":"https://github.com/jbossdemocentral/jboss-fuse-homeloan"
+      "url":"https://github.com/jbossdemocentral/jboss-fuse-mqgateway-failoverdemo"
     }
   ]
 }

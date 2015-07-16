@@ -25,6 +25,8 @@ There are 2 ways to tackle this example, First is to everything manually, create
 You will find 2 shell scripts. 
 
 This is an simple installation, it basically just install the Fuse and setup the fabric for you, with this setting, you will need to follow the instructions to provision the brokers, the instructions can be found in my blog and all the related code here. 
+http://wei-meilin.blogspot.tw/2015/07/jboss-fusea-mq-achieve-fault-tolerant.html
+
 `init.sh`
 
 
