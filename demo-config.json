@@ -1,0 +1,22 @@
+{
+  "name":"JBoss Fuse/AMQ MQ Gateway Failover DEMO",
+  "summary":"This is a very simple Camel application that will automatically discover the broker in Fuse by using MQ Gateway. So no actuall physical IP and Port needs to be set beforehand.",
+  "author":"Christina Lin",
+  "level":"Beginner",
+  "published":true,
+  "prerequisites":"Java VM 1.6 or 1.7, Maven 3.1.1 - 3.2.4",
+  "targetProduct":"JBoss Fuse",
+  "productVersion":"JBoss Fuse 6.2",
+  "technologies": ["AMQ","Fuse", "Camel","Fabric8"],
+  "categories":["fuse"],
+  "links": [ 
+    { 
+      "name":"Blog",
+      "url":"https://vimeo.com/130284677"
+    },
+    {
+      "name":"Code",
+      "url":"https://github.com/jbossdemocentral/jboss-fuse-homeloan"
+    }
+  ]
+}

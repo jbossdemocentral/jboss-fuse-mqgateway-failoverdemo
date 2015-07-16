@@ -1,17 +1,17 @@
 #!/bin/sh 
 DEMO="JBoss Fuse/AMQ Fabric Fail over"
-VERSION=6.1.0
+VERSION=6.2.0
 AUTHORS="Christina Lin"
 PROJECT="git@github.com/weimeilin79/failoverdemo.git"
-FUSE=jboss-fuse-6.1.0.redhat-379
-FUSE_BIN=jboss-fuse-full-6.1.0.redhat-379.zip
+FUSE=jboss-fuse-6.2.0.redhat-133
+FUSE_BIN=jboss-fuse-full-6.2.0.redhat-133.zip
 DEMO_HOME=./target
 FUSE_HOME=$DEMO_HOME/$FUSE
-FUSE_PROJECT=./project/failoverdemo  
+FUSE_PROJECT=./project/failoverdemo62
 FUSE_SERVER_CONF=$FUSE_HOME/etc
 FUSE_SERVER_BIN=$FUSE_HOME/bin
 SRC_DIR=./installs
-PRJ_DIR=./projects/amqp-example-web
+PRJ_DIR=./projects/failoverdemo62
 
 # wipe screen.
 clear 
@@ -23,11 +23,11 @@ chmod +x installs/*.zip
 echo
 echo "#################################################################"
 echo "##                                                             ##"   
-echo "##  Setting up the ${DEMO}               ##"
+echo "##  Setting up the ${DEMO}             ##"
 echo "##                                                             ##"   
 echo "##                                                             ##"   
 echo "##                #####  #   #  #####  #####                   ##"
-echo "##                #      #   #  #      #                     	 ##"
+echo "##                #      #   #  #      #                       ##"
 echo "##                #####  #   #  #####  ####                    ##"
 echo "##                #      #   #      #  #                       ##"
 echo "##                #      #####  #####  #####                   ##"
@@ -36,13 +36,33 @@ echo "##                                                             ##"
 echo "##  brought to you by,                                         ##"   
 echo "##                    ${AUTHORS}                            ##"
 echo "##                                                             ##"   
-echo "##  ${PROJECT}           ##"
+echo "##  ${PROJECT}                ##"
 echo "##                                                             ##"   
 echo "#################################################################"
 echo
 
 # double check for maven.
 command -v mvn -q >/dev/null 2>&1 || { echo >&2 "Maven is required but not installed yet... aborting."; exit 1; }
+
+# Check mvn version must be in 3.1.1 to 3.2.4	
+verone=$(mvn -version | awk '/Apache Maven/{print $3}' | awk -F[=.] '{print $1}')
+vertwo=$(mvn -version | awk '/Apache Maven/{print $3}' | awk -F[=.] '{print $2}')
+verthree=$(mvn -version | awk '/Apache Maven/{print $3}' | awk -F[=.] '{print $3}')     
+     
+if [[ $verone -eq 3 ]] && [[ $vertwo -eq 1 ]] && [[ $verthree -ge 1 ]]; then
+		echo  Correct Maven version $verone.$vertwo.$verthree
+elif [[ $verone -eq 3 ]] && [[ $vertwo -eq 2 ]] && [[ $verthree -le 4 ]]; then
+		echo  Correct Maven version $verone.$vertwo.$verthree
+else
+		echo please make sure you have Maven 3.1.1 - 3.2.4 installed, if you wish to continue with your exisiting maven, please use feature install for your Fuse project
+		exit
+fi
+
+echo "  - Stop all existing Fuse processes..."
+echo
+jps -lm | grep karaf | grep -v grep | awk '{print $1}' | xargs kill -KILL
+
+
 
 # make some checks first before proceeding.	
 if [[ -r $SRC_DIR/$FUSE_BIN || -L $SRC_DIR/$FUSE_BIN ]]; then
@@ -88,56 +108,83 @@ else
 fi
 
 
-
 echo "  - enabling demo accounts logins in users.properties file..."
 echo
 cp support/users.properties $FUSE_SERVER_CONF
+
+echo "  - change mq gateway port to 8888 and virtual host to blogdemo..."
+echo
+cp support/io.fabric8.gateway.detecting.properties $FUSE_HOME/fabric/import/fabric/profiles/gateway/mq.profile/
 
 
 echo "  - making sure 'FUSE' for server is executable..."
 echo
 chmod u+x $FUSE_HOME/bin/start
 
-cd target/$FUSE
 
 echo "  - Start up Fuse in the background"
 echo
-sh bin/start
+sh $FUSE_SERVER_BIN/start
 
 echo "  - Create Fabric in Fuse"
 echo
-sh bin/client -r 3 -d 20 -u admin -p admin 'fabric:create --wait-for-provisioning'
+sh $FUSE_SERVER_BIN/client -r 3 -d 20 -u admin -p admin 'fabric:create'
+
+sleep 15
+
+COUNTER=5
+#===Test if the fabric is ready=====================================
+echo "  - Testing fabric,retry when not ready"
+while true; do
+    if [ $(sh $FUSE_SERVER_BIN/client 'fabric:status'| grep "100%" | wc -l ) -ge 3 ]; then
+        break
+    fi
+    
+    if [  $COUNTER -le 0 ]; then
+    	echo ERROR, while creating Fabric, please check your Network settings.
+    	break
+    fi
+    let COUNTER=COUNTER-1
+    sleep 2
+done
+#===================================================================
+
+
 
 echo "  - Create Master/Slave Broker Profile named: failoverMS"
 echo
-sh bin/client 'mq-create --group blogdemo failoverMS'
+sh $FUSE_SERVER_BIN/client 'mq-create --group blogdemo failoverMS'
 
 echo "  - Create Containers to hold mq profile"
 echo
 echo "  -- 1st Container"
 echo
-sh bin/client 'container-create-child --profile mq-broker-blogdemo.failoverMS root rootcon1'
+sh $FUSE_SERVER_BIN/client 'container-create-child --profile mq-broker-blogdemo.failoverMS root mqcon1'
 
 echo "  -- 2nd Container"
 echo
-sh bin/client 'container-create-child --profile mq-broker-blogdemo.failoverMS root rootcon2'
+sh $FUSE_SERVER_BIN/client 'container-create-child --profile mq-broker-blogdemo.failoverMS root mqcon2'
+
+echo "  -- MQ Gateway Container"
+echo
+sh $FUSE_SERVER_BIN/client 'container-create-child --profile gateway-mq root mqgatewaycon'
 
 pwd
 
 echo "Go to Project directory"
 echo      
-cd ../../$FUSE_PROJECT 
+cd $FUSE_PROJECT 
 
 echo "Start compile and deploy failover camel example project to fuse"
 echo         
 mvn fabric8:deploy
 
 
-cd ../../target/$FUSE
+cd ../..
 
 echo "Add profile to container"
 echo         
-sh bin/client -r 2 -d 40 'container-create-child --profile failoverdemo root testcon'
+sh $FUSE_SERVER_BIN/client -r 2 -d 40 'container-create-child --profile demo-failoverdemo root testcon'
 
 echo "To stop the backgroud Fuse process, please go to bin and execute stop"
 echo

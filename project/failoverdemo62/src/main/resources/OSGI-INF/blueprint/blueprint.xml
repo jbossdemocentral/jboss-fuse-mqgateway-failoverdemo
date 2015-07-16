@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+       http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+  <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+    <property name="brokerURL" value="tcp://localhost:8888?wireFormat.host=blogdemo"/>
+    <property name="userName" value="admin"/>
+    <property name="password" value="admin"/>
+    <property name="clientID" value="failoverdemoClient"/>
+  </bean>
+
+  <bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+    <property name="maxConnections" value="1"/>
+    <property name="maximumActiveSessionPerConnection" value="500"/>
+    <property name="connectionFactory" ref="jmsConnectionFactory"/>
+  </bean>
+  
+  <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <property name="connectionFactory" ref="pooledConnectionFactory"/>
+  </bean>
+  
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+  
+  <route id="senderOpenWire" customId="true">
+	<from uri="timer://foo?period=5s"/>
+        <setBody>
+            <simple>Fuse A-MQ Camel Example OpenWire: ${date:now:hh:MM:ss.SSS})</simple>
+        </setBody>
+        <to uri="activemq:queue:camel-test"/>
+  </route>
+  
+  <route id="senderMqtt">
+    <from uri="timer://foo?period=5s&amp;delay=1000"/>
+    <setBody>
+      <simple>FUSE A-MQ Camel Example with MQTT ${date:now:hh:MM:ss.SSS}</simple>
+    </setBody>
+    <to uri="mqtt:mymqtt?host=tcp://localhost:8888&amp;publishTopicName=mqttTopic&amp;userName=blogdemo/admin&amp;password=admin&amp;clientId=failoverdemoMQTTSender﻿&amp;reconnectDelay=5000"/>
+  </route>
+  
+  <route id="receiverOne">
+    <from uri="activemq:queue:camel-test"/>
+    <log message="${body}"/>
+  </route>
+ 
+  <route id="receiverTwo">
+    <from uri="activemq:topic:mqttTopic"/>
+    <log message="${body}"/>
+  </route>
+  
+</camelContext>
+
+</blueprint>
