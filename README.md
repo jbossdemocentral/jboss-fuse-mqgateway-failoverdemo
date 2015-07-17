@@ -12,11 +12,19 @@ Download JBoss Fuse from jboss.org, and place the downloaded zip file under inst
 Add fabric server passwords for Maven Plugin to your ~/.m2/settings.xml file the fabric server's user and password so that the maven plugin can login to the fabric.
 
 ```
-<server>
-  <id>fabric8.upload.repo</id>
-  <username>admin</username>
-  <password>admin</password>
-</server>
+<settings>
+..........
+  <servers>
+    <server>
+      <id>fabric8.upload.repo</id>
+      <username>admin</username>
+      <password>admin</password>
+    </server>
+  </servers>
+.......
+<servers>
+.......
+</settings>
 ```
 
 
