@@ -9,7 +9,11 @@
   "productVersion":"JBoss Fuse 6.2",
   "technologies": ["AMQ","Fuse", "Camel","Fabric8"],
   "categories":["fuse"],
-  "links": [ 
+  "links": [
+    { 
+      "name":"Video",
+      "url":"https://vimeo.com/133807551"
+    },
     { 
       "name":"Blog",
       "url":"http://wei-meilin.blogspot.tw/2015/07/jboss-fusea-mq-achieve-fault-tolerant.html"
