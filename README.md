@@ -42,4 +42,6 @@ http://wei-meilin.blogspot.tw/2015/07/jboss-fusea-mq-achieve-fault-tolerant.html
 This shell will install everything for you. Including setting up the broker, creating a container, and then deploy the camel application on to Fuse container. 
 `install-all.sh`  
 
+To Start JBoss FUSE Server by running ./target/jboss-fuse-6.2.0.redhat-133/bin/standalone
 
+Log into the admin by going to http://localhost:8181 with username and password of admin:admin
