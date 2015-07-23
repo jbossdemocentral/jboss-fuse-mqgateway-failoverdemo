@@ -30,9 +30,9 @@ Setup and configuration
 
 3. There are 2 ways to tackle this example, First is to everything manually, create a Master/Slave Broker, build the client Camel Application from scratch and then deploy them onto Fuse. Second way is to everything install and configured and just to play with it.
 
-  a. Run `init.sh` for the simple installation. It will basically just install the Fuse and setup the fabric for you, with this setting, you will need to follow the instructions to provision the brokers, the instructions can be found in my blog and all the related code here. http://wei-meilin.blogspot.tw/2015/07/jboss-fusea-mq-achieve-fault-tolerant.html
+  A. Run `init.sh` for the simple installation. It will basically just install the Fuse and setup the fabric for you, with this setting, you will need to follow the instructions to provision the brokers, the instructions can be found in my blog and all the related code here. http://wei-meilin.blogspot.tw/2015/07/jboss-fusea-mq-achieve-fault-tolerant.html
 
-  b. Run `install-all.sh` for the full installation. This shell will install everything for you. Including setting up the broker, creating a container, and then deploy the camel application on to Fuse container. 
+  B. Run `install-all.sh` for the full installation. This shell will install everything for you. Including setting up the broker, creating a container, and then deploy the camel application on to Fuse container. 
 
 4. Although our shell script has already started the FUSE server, if you need to manually start the server in the future, just run `./target/jboss-fuse-6.2.0.redhat-133/bin/start`
 
@@ -43,3 +43,5 @@ Setup and configuration
 7. When your ready to start the demo scenario, start the "testcon".  This will send out messages to the mqgateway and in turn, to mqcon1 and mqcon2.  You can check out if the messages have been processed by going to each individual container and looking at the logs/dashboard for messages processed.
 
 8. To stop the JBoss FUSE Server, run `./target/jboss-fuse-6.2.0.redhat-133/bin/stop`
+
+Video of the demo can be found at https://vimeo.com/133807551
