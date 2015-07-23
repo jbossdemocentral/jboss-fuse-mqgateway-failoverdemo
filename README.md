@@ -11,7 +11,7 @@ Setup and configuration
 
 2. Add fabric server passwords for Maven Plugin to your ~/.m2/settings.xml file the fabric server's user and password so that the maven plugin can login to the fabric.
 
-```
+  ```
 <settings>
 ..........
   <servers>
@@ -25,7 +25,7 @@ Setup and configuration
 <servers>
 .......
 </settings>
-```
+  ```
 
 
 3. There are 2 ways to tackle this example, First is to everything manually, create a Master/Slave Broker, build the client Camel Application from scratch and then deploy them onto Fuse. Second way is to everything install and configured and just to play with it.
@@ -44,4 +44,6 @@ Setup and configuration
 
 8. To stop the JBoss FUSE Server, run `./target/jboss-fuse-6.2.0.redhat-133/bin/stop`
 
+Video
+-----------------------
 Video of the demo can be found at https://vimeo.com/133807551
