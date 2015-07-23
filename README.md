@@ -27,6 +27,7 @@ Setup and configuration
 </settings>
 ```
 
+
 3. There are 2 ways to tackle this example, First is to everything manually, create a Master/Slave Broker, build the client Camel Application from scratch and then deploy them onto Fuse. Second way is to everything install and configured and just to play with it.
 
 3a. Run `init.sh` for the simple installation. It will basically just install the Fuse and setup the fabric for you, with this setting, you will need to follow the instructions to provision the brokers, the instructions can be found in my blog and all the related code here. http://wei-meilin.blogspot.tw/2015/07/jboss-fusea-mq-achieve-fault-tolerant.html
