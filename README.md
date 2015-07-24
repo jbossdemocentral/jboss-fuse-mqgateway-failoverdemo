@@ -42,7 +42,14 @@ Setup and configuration
 
 7. When your ready to start the demo scenario, start the "testcon".  This will send out messages to the mqgateway and in turn, to mqcon1 and mqcon2.  You can check out if the messages have been processed by going to each individual container and looking at the logs/dashboard for messages processed.
 
-8. To stop the JBoss FUSE Server, run `./target/jboss-fuse-6.2.0.redhat-133/bin/stop`
+8. To stop the JBoss FUSE Server, run 
+
+  1. `./target/jboss-fuse-6.2.0.redhat-133/bin/admin stop testcon`
+  2. `./target/jboss-fuse-6.2.0.redhat-133/bin/admin stop mqgatewaycon`
+  3. `./target/jboss-fuse-6.2.0.redhat-133/bin/admin stop mqcon1`
+  4. `./target/jboss-fuse-6.2.0.redhat-133/bin/admin stop mqcon2`
+  5. `./target/jboss-fuse-6.2.0.redhat-133/bin/stop`
+
 
 Video
 -----------------------
